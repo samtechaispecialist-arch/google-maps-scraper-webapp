@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+  server:
+    build: ./server
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongodb
+      - redis
+    environment:
+      NODE_ENV: production
+      MONGO_URI: mongodb://admin:admin123@mongodb:27017/maps-scraper
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET}
+      CHROME_PATH: /usr/bin/chromium
+    volumes:
+      - ./server/src:/app/src
+    shm_size: 2gb
+
+  client:
+    build: ./client
+    ports:
+      - "3000:3000"
+    environment:
+      VITE_API_URL: http://localhost:3001
+    depends_on:
+      - server
+
+volumes:
+  mongo-data:
+  redis-data:
