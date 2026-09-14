@@ -1,0 +1,10 @@
+# Vercel Frontend Deployment
+
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "env": {
+    "VITE_API_URL": "@api_url"
+  }
+}

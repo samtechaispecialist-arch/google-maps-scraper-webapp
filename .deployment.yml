@@ -1,0 +1,65 @@
+# Platform-specific deployment configurations
+
+## Vercel (Frontend)
+
+### vercel.json already configured
+
+## Railway.app (Backend + Databases)
+
+```yaml
+# railway.yaml
+- name: backend
+  root: server
+  buildCommand: npm install
+  startCommand: npm start
+  environments:
+    - name: production
+      variables:
+        NODE_ENV: production
+        CHROME_PATH: /usr/bin/chromium
+
+- name: mongodb
+  image: mongo:6
+  
+- name: redis
+  image: redis:7-alpine
+```
+
+## Render.com (Backend)
+
+```yaml
+# render.yaml
+services:
+  - type: web
+    name: maps-scraper-api
+    runtime: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    env: production
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CHROME_PATH
+        value: /usr/bin/chromium
+```
+
+## DigitalOcean (Full Stack)
+
+```yaml
+# app.yaml
+name: maps-scraper
+services:
+  - name: api
+    sourcedir: server
+    buildCommand: npm install
+    runCommand: npm start
+    envs:
+      - key: NODE_ENV
+        value: production
+  - name: web
+    sourcedir: client
+    buildCommand: npm install && npm run build
+    outputDir: dist
+    httpPort: 3000
+```
